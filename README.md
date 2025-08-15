@@ -38,7 +38,7 @@ TEMP1 and TEMP2 are the two signal cables that will be connected to IN1 and IN2 
 * Try to thermally isolate the sensor-heater-object system as best as you can with the case that you build. This will have the largest effect on the performance of the system.
 * Place the temperature sensors far from the heater. This will ensure that you're measuring the actual temperature of the object, not just the temperature of the heater.
 * Don't place the sensors too close to each other so you can see on the independent sensor if the object is being heated unevenly.
-* Try to match the resistors in the voltage dividers as best as possible. This will 
+* Try to match the resistors in the voltage dividers as best as possible. This will ensure that the voltage you measure on both dividers is the same as long as the temperature is the same.
 
 Because the performance is largely dependent on the probe setup, there are no guarantees that you will get mK-level stability if it isn't good enough. However, below you will find tools to assess the performance and potential flaws of your setup so you can iterate your design until it is good enough.
 
