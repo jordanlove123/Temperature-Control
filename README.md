@@ -69,7 +69,7 @@ Use the following wiring diagram to make the necessary connections:
     <img src="images/wiring.png" height="500">
 </div>
 
-WARNING: THE WALL PLUG CARRIES HIGH VOLTAGES WHEN CONNECTED. BE VERY CAUTIOUS WHEN WORKING WITH POWER CABLES AND DO NOT PLUG IN THE BOX UNTIL ALL THESE CABLES FROM THE POWER CONNECTOR ARE SHRINK WRAPPED AND THERE IS NO EXPOSED METAL. PLUGGING IN WITHOUT TAKING THE CORRECT PRECAUTIONS COULD CAUSE HARM.
+WARNING: THE WALL PLUG CARRIES HIGH VOLTAGES WHEN CONNECTED. BE VERY CAUTIOUS WHEN WORKING WITH POWER CABLES AND DO NOT PLUG IN THE BOX UNTIL ALL THESE CABLES ARE SHRINK WRAPPED AND THERE IS NO EXPOSED METAL. PLUGGING IN WITHOUT TAKING THE CORRECT PRECAUTIONS COULD CAUSE HARM.
 
 ### Code
 The Arduino code makes use of two custom libraries: AD7190 for interfacing with the ADC on the shield and PID for handling the feedback loop of the system. These two folders can be found in [Code/Libraries](Code/Libraries) and can be installed using the following steps:
