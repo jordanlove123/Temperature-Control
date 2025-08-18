@@ -63,15 +63,13 @@ Box top:
     <img src="images/box_top.png" height="500">
 </div>
 
-For the display on the front, the following connections should be made:
-| Screen pin | Arduino pin |
-|:-----------|:------------|
-| VCC        | 5V          |
-| GND        | GND         |
-| SDA        | SDA         |
-| SCL        | SCL         |
+Use the following wiring diagram to make the necessary connections:
 
-Additionally, use the labels on the ACDC converter and the cable connector on the back to determine the correct wiring. E goes to GND on the ACDC converter, L goes to L, and N goes to N. WARNING: THE WALL PLUG CARRIES HIGH VOLTAGES WHEN CONNECTED. DO NOT PLUG IN THE BOX UNTIL ALL THESE CABLES ARE SHRINK WRAPPED AND THERE IS NO EXPOSED METAL. PLUGGING IN WITHOUT TAKING THE CORRECT PRECAUTIONS COULD CAUSE HARM.
+<div align="center">
+    <img src="images/wiring.png" height="500">
+</div>
+
+WARNING: THE WALL PLUG CARRIES HIGH VOLTAGES WHEN CONNECTED. BE VERY CAUTIOUS WHEN WORKING WITH POWER CABLES AND DO NOT PLUG IN THE BOX UNTIL ALL THESE CABLES FROM THE POWER CONNECTOR ARE SHRINK WRAPPED AND THERE IS NO EXPOSED METAL. PLUGGING IN WITHOUT TAKING THE CORRECT PRECAUTIONS COULD CAUSE HARM.
 
 ### Code
 The Arduino code makes use of two custom libraries: AD7190 for interfacing with the ADC on the shield and PID for handling the feedback loop of the system. These two folders can be found in [Code/Libraries](Code/Libraries) and can be installed using the following steps:
@@ -113,12 +111,17 @@ When verbose is set to true, data is output to the serial port in the following 
 **Timestamp &nbsp;&nbsp;&nbsp; Temperature voltage &nbsp;&nbsp;&nbsp; Independent sensor reading &nbsp;&nbsp;&nbsp; Error voltage &nbsp;&nbsp;&nbsp; Proportional term &nbsp;&nbsp;&nbsp; Integral term &nbsp;&nbsp;&nbsp; Derivative term &nbsp;&nbsp;&nbsp; Output power &nbsp;&nbsp;&nbsp; Output voltage to heater circuit**
 
 ### Tuning
-
 DISCLAIMER: This is not necessarily the optimal tuning method, but just the one that I found works best for me. If you have another method that you prefer and you know it works better, go ahead and use it. This is just for a beginner to get a feel for tuning.
 
 NOTE: There is a [jupyter notebook](Code/Data%20Analysis/data_analysis.ipynb) in Code/Data Analysis that can be used to help with tuning. If you would like to use your own analysis techniques, it is not required to use this notebook, however if you have your own analysis techniques in addition to those found in the notebook, you probably don't need this section anyway.
 
 The notebook has 3 main cells that will be useful. The first one, third from the top, will just take your data and plot everything from the serial output on it's own axis for the entire dataset. This can be used to look at your data wholistically and to analyze long term stability. The next cell from the top will plot the last 150 seconds of data, and updates every second. This can be used if you want to see live-updating data and catch any large errors before having to wait to see everything at once. The last one is the PSA spectrum of the P, I, and D terms of the controller and the temperature data. This essentially shows you how much of each frequency is contained in the data, which is useful for reasons explained below.
+
+#### Step response
+When tuning, you will want to look at the step response of your system, which is just how it responds to an instantaneous change in the setpoint (In this case, moving it up). Do this by turning off the heater, waiting for the temperature to return to room temperature, then sending the command "sint 0" and turning the heater back on. The step response will be the temperature graph after turning the heat back on.
+
+#### Recognizing issues
+Once you get to the point of tuning the parameters of the system, you want to make sure the probe setup is good enough, because otherwise you're limited by the quality of your setup instead of the accuracy of the parameters. The main issue that you will run into with the probe setup is insufficient thermal isolation, which means surrounding air temperature is being factored into your measurement. Generally, the object being temperature controlled will have a much larger thermal mass than the surrounding air, so watch for large, quick changes in temperature. A normal time period for a temperature change depends on your thermal mass, but will typically be on the order of a couple minutes. If you see relatively large temperature changes happening in a matter of seconds, it's probably a probe issue rather than a parameter issue.
 
 #### Step 0: The basics
 Before starting, a general overview of PID. PID stands for proportional, integral, derivative, and controls a system using exactly those things. It takes as input the error between the setpoint and the actual temperature and outputs the negative sum of the integral of the error, derivative of the error, and exact error all scaled by constants, called the gains. The proportional term just pushes the temperature towards the setpoint. This might be enough in some cases, but think about what would happen if the error were 0 and the temperature was above room temperature. A controller with only the proportional term would not be doing anything to keep the temperature above room temperature because K*0 = 0 so it would output 0. This means any controller with only the proportional term will have some steady state error. This is where the integral term comes in. If there is any steady state error, the integral term will accumulate over time, pushing the temperature towards the setpoint. The speed that it accumulates is dictated by the integral gain. Notably, too high of a proportional gain or integral gain will cause oscillations, which are not what we want. This is where the derivative term comes in. It can be thought of as predicting the future; if the derivative is positive, the temperature will probably go up, and so the derivative term preemptively reduces the output power to reduce this change. Such a term will provide damping of oscillations, and that is its job.
@@ -127,7 +130,7 @@ Before starting, a general overview of PID. PID stands for proportional, integra
 Before doing any tuning, figure out the ambient temperature of the object being temperature controlled using the system. The system guarantees high precision, but not high accuracy, so doing this will give you a frame of reference for what the temperature actually is. Once you've done this, set the setpoint. It can be whatever you want but is bounded on both sides by two factors: the bottom end is about 2-3 <sup>o</sup>C above room temperature since the system has no cooler so ambient temperature is used to cool it, and the upper end is limited by your heater's power output. This depends on the resistance of the heater and the input voltage that you use (12V if you use the optional container with no modifications).
 
 #### Step 2: Finding proportional gain
-The next step after setting the setpoint is to find K<sub>p</sub>, the proportional gain of the system. To find all parameters, look at the step response of the system by turning off the heater, waiting for the system to return to room temperature, and then turn the heater back on and look at the temperature. To find the proportional gain, just pick a number to start. If the step response goes past the setpoint, reduce it by half until it doesn't. Then, slowly turn it up and watch the step response each time you change it. Once it is settling close to the setpoint, but slightly below, move on to step 3.
+The next step after setting the setpoint is to find K<sub>p</sub>, the proportional gain of the system. To find the proportional gain, just pick a number to start. If the step response goes past the setpoint, reduce it by half until it doesn't. Then, slowly turn it up and watch the step response each time you change it. Once it is settling close to the setpoint, but slightly below, move on to step 3.
 
 #### Step 3: Finding integral gain
 First, cut your proportional gain in half, and then pick a number for your integral gain. It will probably be much smaller than the proportional gain you found. If the oscillations are centered above the setpoint while it settles, turn the integral gain down. If below, do the opposite. Once the oscillations are centered approximately at the setpoint, move on to the next step.
