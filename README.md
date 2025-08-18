@@ -1,6 +1,8 @@
 # Temperature Control
 System for controlling temperature of an object to within 1 mK of a given setpoint.
 
+DISCLAIMER: As is discussed below, some parts of the system will have to be designed by the user because they depend on the shape, size, and thermal mass of the object. This means that to a certain extent, performance is dependent on the user's design of these components, but I tried to include as many recommendations as possible for best practices.
+
 ## Setup
 
 ### Recommended installations
@@ -100,9 +102,9 @@ The Arduino accepts a variety of commands to interface with the PID system, whic
 
 <sup>2</sup> Due to the anti-windup, if |arg1| > 10, it will be set to either -10 or +10
 
-<sup>3</sup> Arduino variables are stored in program memory while a program is running which is volatile, meaning it is lost when the Arduino loses power. However, the Arduino also has a non-volatile form of data storage called EEPROM, so if you want to move your controller and disconnect power you won't lose the parameters you found during tuning. This memory has a limited number of write cycles though, so use this command sparingly.
+<sup>3</sup> When an Arduio program is running, variables are stored in program memory which is volatile, meaning it is lost when the Arduino loses power. However, the Arduino also has a non-volatile form of data storage called EEPROM, so if you want to move your controller and disconnect power you won't lose the parameters you found during tuning. This memory has a limited number of write cycles though, so use this command sparingly.
 
-In order to ensure the commands are received correctly, they should be sent a couple times in quick succession because the Arduino only listens on the serial port when it's not performing other calculations.
+Due to an unknown bug in the Arduino code, commands need to be sent multiple times in quick succession in order for them to be properly received.
 
 ### Serial output
 
@@ -111,11 +113,11 @@ When verbose is set to true, data is output to the serial port in the following 
 **Timestamp &nbsp;&nbsp;&nbsp; Temperature voltage &nbsp;&nbsp;&nbsp; Independent sensor reading &nbsp;&nbsp;&nbsp; Error voltage &nbsp;&nbsp;&nbsp; Proportional term &nbsp;&nbsp;&nbsp; Integral term &nbsp;&nbsp;&nbsp; Derivative term &nbsp;&nbsp;&nbsp; Output power &nbsp;&nbsp;&nbsp; Output voltage to heater circuit**
 
 ### Tuning
-DISCLAIMER: This is not necessarily the optimal tuning method, but just the one that I found works best for me. If you have another method that you prefer and you know it works better, go ahead and use it. This is just for a beginner to get a feel for tuning.
+DISCLAIMER: This is not necessarily the optimal tuning method, but just the one that I found works best for me. If you have another method that you prefer and you know it works better, go ahead and use it. This is just for a beginner to get a feel for tuning. However, I have found that some common tuning methods don't work very well, possibly because of some of the non-linearities in the system.
 
 NOTE: There is a [jupyter notebook](Code/Data%20Analysis/data_analysis.ipynb) in Code/Data Analysis that can be used to help with tuning. If you would like to use your own analysis techniques, it is not required to use this notebook, however if you have your own analysis techniques in addition to those found in the notebook, you probably don't need this section anyway.
 
-The notebook has 3 main cells that will be useful. The first one, third from the top, will just take your data and plot everything from the serial output on it's own axis for the entire dataset. This can be used to look at your data wholistically and to analyze long term stability. The next cell from the top will plot the last 150 seconds of data, and updates every second. This can be used if you want to see live-updating data and catch any large errors before having to wait to see everything at once. The last one is the PSA spectrum of the P, I, and D terms of the controller and the temperature data. This essentially shows you how much of each frequency is contained in the data, which is useful for reasons explained below.
+The notebook has 3 main cells that will be useful. The first one, third from the top, will just take your data and plot everything from the serial output on it's own axis for the entire dataset. This can be used to look at your data wholistically and to analyze long term stability. The next cell from the top will plot the last 150 seconds of data, and updates every second. This can be used if you want to see live-updating data and catch any large errors without having to wait to see everything at once. The last one is the PSA spectrum of the P, I, and D terms of the controller and the temperature data. This essentially shows you how much of each frequency is contained in the data, which is useful for reasons explained below.
 
 #### Step response
 When tuning, you will want to look at the step response of your system, which is just how it responds to an instantaneous change in the setpoint (In this case, moving it up). Do this by turning off the heater, waiting for the temperature to return to room temperature, then sending the command "sint 0" and turning the heater back on. The step response will be the temperature graph after turning the heat back on.
