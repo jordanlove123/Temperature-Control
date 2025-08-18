@@ -17,7 +17,7 @@ These programs can all be downloaded for free.
 ### Manufacturing
 
 #### Shield PCB
-The PCB files can be found at [Manufacturing/Shield PCB](Manufacturing/ShieldPCB/). In order to get the manufacturing files, open the .kicad_pcb file and export according to what is necessary for your manufacturer of choice. If you don't have a manufacturer of choice, I recommend [JLCPCB](https://jlcpcb.com/). Once you have the board, assemble it according to the component labels in the .kicad_sch file. The complete list of necessary components can be found in the bill of materials.
+The PCB files can be found at [Manufacturing/Shield PCB](Manufacturing/ShieldPCB/). In order to get the manufacturing files, open the .kicad_pcb file and export according to what is necessary for your manufacturer of choice. If you don't have a manufacturer of choice, I recommend [JLCPCB](https://jlcpcb.com/). Once you have the board, assemble it according to the component labels in the .kicad_sch file. The complete list of necessary components can be found in the [bill of materials](Manufacturing/BOM.xlsx).
 
 #### Container (optional)
 If you have access to a 3D printer, I recommend printing the container found in [Manufacturing/Box](Manufacturing/Box). This can be done by opening the .stl files in Prusa Slicer and converting them to gcode:
