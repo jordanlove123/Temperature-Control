@@ -1,5 +1,5 @@
 # Temperature Control
-System for controlling temperature of an object to within 1 mK of a given setpoint.
+System for controlling temperature of an object to within 10 mK of a given setpoint.
 
 DISCLAIMER: As is discussed below, some parts of the system will have to be designed by the user because they depend on the shape, size, and thermal mass of the object. This means that to a certain extent, performance is dependent on the user's design of these components, but I tried to include as many recommendations as possible for best practices.
 
